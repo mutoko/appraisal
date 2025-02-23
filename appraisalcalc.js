@@ -9,11 +9,15 @@ document.addEventListener("DOMContentLoaded", function () {
         let weight = parseFloat(weightCell.textContent.trim()) || 0;
         let score = parseFloat(scoreCell.textContent.trim()) || 0;
 
-        // Ensure score is between 0 and 100
-        score = Math.max(0, Math.min(100, score));
+        // Ensure score is within 0-100
+        if (score < 0 || score > 100) {
+            alert("Score must be between 0 and 100!");
+            scoreCell.textContent = "0"; // Reset score to 0
+            score = 0;
+        }
 
-        // Calculate weighted average
-        let weightedAverage = (weight * score) / 100;
+        // If score is 100%, weighted average should be equal to weight
+        let weightedAverage = (score === 100) ? weight : (weight * score) / 100;
 
         // Display the calculated value in the Weighted Average cell
         weightedAvgCell.textContent = weightedAverage.toFixed(2) + "%";
