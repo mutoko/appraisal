@@ -4,8 +4,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const progressContainer = document.getElementById("progressContainer");
     const progressBar = document.getElementById("progressBar");
 
-    if (!tableBody) {
-        console.error("Table body not found!");
+    if (!tableBody || !fetchButton || !progressContainer || !progressBar) {
+        console.error("One or more required elements not found in the document.");
         return;
     }
 
@@ -28,11 +28,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 progressBar.style.width = progress + "%";
                 progressBar.innerText = progress + "%";
             }
-        }, 200); // Progress bar animation speed
+        }, 200);
     }
 
     function fetchEmployeesData() {
-        fetch("appraisalfetch.php")
+        fetch("Appraisalfetch.php")
             .then((response) => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -40,39 +40,52 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.json();
             })
             .then((data) => {
+                console.log("Fetched data:", data); // Debugging
+
                 tableBody.innerHTML = ""; // Clear existing rows
 
-                if (data.length === 0 || (data.length === 1 && data[0].message)) {
+                if (!Array.isArray(data) || data.length === 0 || (data.length === 1 && data[0].message)) {
                     const newRow = document.createElement("tr");
                     newRow.innerHTML = `<td colspan="20" style="text-align:center; color:red;">
-                        ${data[0].message || "No data found, consult your supervisor."}
+                        ${data[0]?.message || "No data found, consult your supervisor."}
                     </td>`;
                     tableBody.appendChild(newRow);
                 } else {
                     data.forEach((row) => {
-                        const newRow = document.createElement("tr");
-                        newRow.innerHTML = `
-                            <td>${row.Perspectives || ''}</td>
-                            <td>${row.StrategicObjective || ''}</td>
-                            <td>${row.SSMARTAObjectives || ''}</td>
-                            <td>${row.WeightSSMARTAObjective || ''}</td>
-                            <td>${row.TargetSSMARTAObjective || ''}</td>
-                            <td>${row.Initiatives || ''}</td>
-                            <td>${row.SpecificActivities || ''}</td>
-                            <td>${row.ExpectedOutput || ''}</td>
-                            <td>${row.January || ''}</td>
-                            <td>${row.February || ''}</td>
-                            <td>${row.March || ''}</td>
-                            <td>${row.April || ''}</td>
-                            <td>${row.May || ''}</td>
-                            <td>${row.June || ''}</td>
-                            <td>${row.July || ''}</td>
-                            <td>${row.August || ''}</td>
-                            <td>${row.September || ''}</td>
-                            <td>${row.October || ''}</td>
-                            <td>${row.November || ''}</td>
-                            <td>${row.December || ''}</td>
-                            
+                        const weightPercentage = row.WeightSSMARTAObjective ? `${row.WeightSSMARTAObjective}%` : "0%";
+                        const targetPercentage = row.TargetSSMARTAObjective ? `${row.TargetSSMARTAObjective}%` : "0%";
+
+                        const weightPercentage2 = row.WeightSSMARTAObjective ? `${row.WeightSSMARTAObjective}%` : "0%";
+                        const targetPercentage2 = row.TargetSSMARTAObjective ? `${row.TargetSSMARTAObjective}%` : "0%";
+
+                         // Modify UoM and DI columns as needed
+                         const uomValue = "I";  // Set "I" for DI column
+                         const diValue = "%";  // Set percentage for UoM column
+                         const achievementValue = "100%";  // Set default value for achievement column 
+                         const score = "100%";  // Set default value for score column
+ 
+                         const newRow = document.createElement("tr");
+                         newRow.innerHTML = `
+                             <td><strong>${row.Perspectives || ""}</strong></td>
+                             <td>${row.SSMARTAObjectives || ""}</td>
+                             <td>${row.Initiatives || ""}</td>
+                             <td>${diValue}</td> <!-- Updated DI column -->
+                             <td>${uomValue}</td> <!-- Updated UoM column -->
+                             <td>${row.WeightSSMARTAObjective || "0%"}</td>
+                             <td>${row.TargetSSMARTAObjective || "0%"}</td>
+                             <td>${achievementValue}</td>
+                             <td>${score}</td>
+                             <td></td>
+                             <td></td>
+                             <td></td>
+                             <td>${row.WeightSSMARTAObjective || "0%"}</td>
+                             <td>${row.TargetSSMARTAObjective || "0%"}</td>
+                             <td>${achievementValue}</td>
+                             <td>${score}</td>
+                             <td></td>
+                             <td></td>
+                             <td></td>
+                             <td></td>
                         `;
                         tableBody.appendChild(newRow);
                     });

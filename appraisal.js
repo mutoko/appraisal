@@ -18,36 +18,42 @@ document.addEventListener("DOMContentLoaded", function () {
     headers: {
         "Content-Type": "application/json",
     },
- })
- .then((response) => response.json()) // Parse JSON response
- .then((data) => {
+   })
+   .then((response) => response.json()) // Parse JSON response
+   .then((data) => {
     // Loop through the data and dynamically create rows in the table
     data.forEach((rowData) => {
         const newRow = document.createElement("tr");
 
-        newRow.innerHTML = `
-            <td contenteditable="false" class="first-column">${rowData.Perspectives}</td>
-            <td contenteditable="false">${rowData.StrategicObjective}</td>
-            <td contenteditable="false">${rowData.SSMARTAObjectives}</td>
-            <td contenteditable="false" class="percentage">${formatPercentage(rowData.WeightSSMARTAObjective)}</td>
-            <td contenteditable="false" class="percentage">${formatPercentage(rowData.TargetSSMARTAObjective)}</td>
-            <td contenteditable="false">${rowData.Initiatives}</td>
-            <td contenteditable="false">${rowData.SpecificActivities}</td>
-            <td contenteditable="false">${rowData.ExpectedOutput}</td>
-            <td contenteditable="false">${rowData.January}</td>
-            <td contenteditable="false">${rowData.February}</td>
-            <td contenteditable="false">${rowData.March}</td>
-            <td contenteditable="false">${rowData.April}</td>
-            <td contenteditable="false">${rowData.May}</td>
-            <td contenteditable="false">${rowData.June}</td>
-            <td contenteditable="false">${rowData.July}</td>
-            <td contenteditable="false">${rowData.August}</td>
-            <td contenteditable="false">${rowData.September}</td>
-            <td contenteditable="false">${rowData.October}</td>
-            <td contenteditable="false">${rowData.November}</td>
-            <td contenteditable="false">${rowData.December}</td>
-            
-        `;
+                // Ensure numeric values are displayed as percentages
+                const weightPercentage = row["WeightSSMARTAObjective"] ? `${row["WeightSSMARTAObjective"]}%` : "0%";
+                const weight2Percentage = row["Supervisor_WeightSSMARTAObjective"] ? `${row["Supervisor_WeightSSMARTAObjective"]}%` : "0%";
+
+                const targetPercentage = row.TargetSSMARTAObjective ? `${row.TargetSSMARTAObjective}%` : "0%";
+                const target2Percentage = row.Supervisor_TargetSSMARTAObjective ? `${row.Supervisor_TargetSSMARTAObjective}%` : "0%";
+
+                tr.innerHTML = `
+                    <td contenteditable="false"><strong>${row.Perspectives || ""}</strong></td>
+                    <td contenteditable="false">${row.SSMARTAObjectives	 || ""}</td>
+                    <td contenteditable="false">${row.Initiatives || ""}</td>
+                    <td contenteditable="false">${row.UoM || ""}</td>
+                    <td contenteditable="false">${row.DI || ""}</td>
+                    <td contenteditable="false">${weightPercentage}</td>
+                    <td contenteditable="false">${targetPercentage}</td>
+                    <td contenteditable="false">${row.Annual_Actual_Achievement || ""}</td>
+                    <td contenteditable="false">${row.Annual_Score || ""}</td>
+                    <td contenteditable="false">${row.Annual_Weighted_Average || ""}</td>
+                    <td contenteditable="false">${row.Annual_Detailed_Explanation || ""}</td>
+                    <td contenteditable="false">${row.Annual_Evidence || ""}</td>
+                    <td contenteditable="false">${weight2Percentage}</td>
+                    <td contenteditable="false">${target2Percentage}</td>
+                    <td contenteditable="false">${row.Supervisor_ActualAchievement || ""}</td>
+                    <td contenteditable="false">${row.Supervisor_Score || ""}</td>
+                    <td contenteditable="false">${row.Supervisor_Weighted_Average || ""}</td>
+                    <td contenteditable="false">${row.Supervisor_Comments || ""}</td>
+                    <td contenteditable="false">${row.Supervisor_IdentifiedGaps || ""}</td>
+                    <td contenteditable="false">${row.Supervisor_Strategies || ""}</td>
+                `;
 
         // Append new row to table body
         tableBody.appendChild(newRow);
