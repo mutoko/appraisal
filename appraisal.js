@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
   const tableBody = document.getElementById("tableBody");
-  const addRowButton = document.getElementById("addRowButton");
   const submitButton = document.getElementById("submitButton"); // Reference to the submit button
   const FetchButton = document.getElementById("FetchButton");
 

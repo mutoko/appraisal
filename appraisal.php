@@ -21,7 +21,7 @@ $staffNo = $_SESSION['staffNo']; // Retrieve staffNo from the session
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // Fetch data only for the logged-in user's staffNo
-    $sql = "SELECT * FROM workplan WHERE staffNo = ?";
+    $sql = "SELECT * FROM appraisal_perfomance WHERE staffNo = ?";
     $stmt = $connection->prepare($sql);
     $stmt->bind_param("s", $staffNo);
     $stmt->execute();
@@ -44,51 +44,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
         if (!empty($submittedData)) {
             // DELETE existing records for this staffNo before inserting new ones
-            $deleteSQL = "DELETE FROM workplan WHERE staffNo = ?";
+            $deleteSQL = "DELETE FROM appraisal_perfomance WHERE staffNo = ?";
             $deleteStmt = $connection->prepare($deleteSQL);
             $deleteStmt->bind_param("s", $staffNo);
             $deleteStmt->execute();
             $deleteStmt->close();
 
             // Prepare the SQL statement for inserting new data
-            $stmt = $connection->prepare("INSERT INTO workplan 
-                (staffNo, Perspectives, StrategicObjective, SSMARTAObjectives, WeightSSMARTAObjective,
-                TargetSSMARTAObjective, Initiatives, SpecificActivities, ExpectedOutput, January, February, March, 
-                April, May, June, July, August, September, October, November, December) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $connection->prepare("INSERT INTO appraisal_perfomance (
+                staffNo, Perspectives, SSMARTAObjectives, Initiatives, UoM, DI,
+                WeightSSMARTAObjective, TargetSSMARTAObjective, Annual_Actual_Achievement, Annual_Score,
+                Annual_Weighted_Average, Annual_Detailed_Explanation, Annual_Evidence, 
+                Supervisor_WeightSSMARTAObjective, Supervisor_TargetSSMARTAObjective,
+                Supervisor_ActualAchievement, Supervisor_Score, Supervisor_Weighted_Average,
+                Supervisor_Comments, Supervisor_IdentifiedGaps, Supervisor_Strategies
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
             if (!$stmt) {
                 die("Error preparing insert statement: " . $connection->error);
             }
 
             // Loop through the submitted data and insert into the database
-            foreach ($submittedData as $rowData) {
+            foreach ($data['submittedData'] as $rowData) {
                 $Perspectives = $rowData['Perspectives'];
-                $StrategicObjective = $rowData['StrategicObjective'];
                 $SSMARTAObjectives = $rowData['SSMARTAObjectives'];
+                $Initiatives = $rowData['Initiatives'];
+                $UoM = $rowData['UoM'];
+                $DI = $rowData['DI'];
                 $WeightSSMARTAObjective = $rowData['WeightSSMARTAObjective'];
                 $TargetSSMARTAObjective = $rowData['TargetSSMARTAObjective'];
-                $Initiatives = $rowData['Initiatives'];
-                $SpecificActivities = $rowData['SpecificActivities'];
-                $ExpectedOutput = $rowData['ExpectedOutput'];
-                $January = $rowData['January'];
-                $February = $rowData['February'];
-                $March = $rowData['March'];
-                $April = $rowData['April'];
-                $May = $rowData['May'];
-                $June = $rowData['June'];
-                $July = $rowData['July'];
-                $August = $rowData['August'];
-                $September = $rowData['September'];
-                $October = $rowData['October'];
-                $November = $rowData['November'];
-                $December = $rowData['December'];
+                $Annual_Actual_Achievement = $rowData['Annual_Actual_Achievement'];
+                $Annual_Score = $rowData['Annual_Score'];
+                $Annual_Weighted_Average = $rowData['Annual_Weighted_Average'];
+                $Annual_Detailed_Explanation = $rowData['Annual_Detailed_Explanation'];
+                $Annual_Evidence = $rowData['Annual_Evidence'];
+                $Supervisor_WeightSSMARTAObjective = $rowData['Supervisor_WeightSSMARTAObjective'];
+                $Supervisor_TargetSSMARTAObjective = $rowData['Supervisor_TargetSSMARTAObjective'];
+                $Supervisor_ActualAchievement = $rowData['Supervisor_ActualAchievement'];
+                $Supervisor_Score = $rowData['Supervisor_Score'];
+                $Supervisor_Weighted_Average = $rowData['Supervisor_Weighted_Average'];
+                $Supervisor_Comments = $rowData['Supervisor_Comments'];
+                $Supervisor_IdentifiedGaps = $rowData['Supervisor_IdentifiedGaps'];
+                $Supervisor_Strategies = $rowData['Supervisor_Strategies'];
 
                 // Bind parameters and include staffNo for each insert
-                $stmt->bind_param("sssssssssssssssssssss", 
-                    $staffNo, $Perspectives, $StrategicObjective, $SSMARTAObjectives, $WeightSSMARTAObjective, 
-                    $TargetSSMARTAObjective, $Initiatives, $SpecificActivities, $ExpectedOutput, $January, $February, 
-                    $March, $April, $May, $June, $July, $August, $September, $October, $November, $December);
+                $stmt->bind_param("isssssdddddssdddddsss", 
+                $staffNo, $Perspectives, $SSMARTAObjectives, $Initiatives, $UoM, $DI, $WeightSSMARTAObjective,
+                $TargetSSMARTAObjective, $Annual_Actual_Achievement, $Annual_Score, $Annual_Weighted_Average,
+                $Annual_Detailed_Explanation, $Annual_Evidence, $Supervisor_WeightSSMARTAObjective,
+                $Supervisor_TargetSSMARTAObjective, $Supervisor_ActualAchievement, $Supervisor_Score,
+                $Supervisor_Weighted_Average, $Supervisor_Comments, $Supervisor_IdentifiedGaps, $Supervisor_Strategies
+            );
 
                 if (!$stmt->execute()) {
                     echo "Error inserting data for $Perspectives $StrategicObjective: " . $stmt->error . "<br>";
