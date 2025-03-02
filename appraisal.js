@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let isEditable = false; // Tracks whether the table is in edit mode
 
   // Fetch data when the page loads up
-  fetch("workplan.php", {
+  fetch("appraisal.php", {
     method: "GET",
     headers: {
         "Content-Type": "application/json",
@@ -46,9 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <td contenteditable="false">${rowData.October}</td>
             <td contenteditable="false">${rowData.November}</td>
             <td contenteditable="false">${rowData.December}</td>
-             <td>
-                  <a href="#" class="add-link" contenteditable="false">Add</a> | <a href="#" class="delete-link" contenteditable="false">Delete</a>
-              </td>
+            
         `;
 
         // Append new row to table body
@@ -105,9 +103,6 @@ document.addEventListener("DOMContentLoaded", function () {
       <td contenteditable="true"></td>
       <td contenteditable="true"></td>
       <td contenteditable="true"></td>
-       <td>
-                  <a href="#" class="add-link" contenteditable="false">Add</a> | <a href="#" class="delete-link" contenteditable="false">Delete</a>
-              </td>
     `;
     tableBody.appendChild(newRow);
     attachRowListeners(newRow); // Attach listeners to the new row
@@ -190,7 +185,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       // Send data to the server
-      fetch("workplan.php", {
+      fetch("appraisal.php", {
         method: "POST",
         headers: {"Content-Type": "application/json", // Use application/json
         },

@@ -18,7 +18,7 @@ if (isset($_SESSION['staffNo2'])) {
     $staffNo2 = intval($_SESSION['staffNo2']); // Convert to integer for security
 
     // Prepare SQL query
-    $sql = "SELECT * FROM workplan WHERE StaffNo = ?";
+    $sql = "SELECT Perspectives, SSMARTAObjectives, Initiatives, WeightSSMARTAObjective, TargetSSMARTAObjective FROM workplan WHERE staffNo = ?";
     $stmt = $connection->prepare($sql);
     $stmt->bind_param("i", $staffNo2);
     $stmt->execute();

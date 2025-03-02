@@ -72,10 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <td>${row.October || ''}</td>
                             <td>${row.November || ''}</td>
                             <td>${row.December || ''}</td>
-                            <td>
-                                <a href="#" class="add-link" contenteditable="false">Add</a> | 
-                                <a href="#" class="delete-link" contenteditable="false">Delete</a>
-                            </td>
+                            
                         `;
                         tableBody.appendChild(newRow);
                     });
