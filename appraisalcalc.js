@@ -1,81 +1,91 @@
-      // This function calculates the Weighted Average for each row
-      function calculateWeightedAverage() {
-        const rows = document.querySelectorAll('#tableBody tr'); // Select all rows in the table body
+document.addEventListener("DOMContentLoaded", function () {
+    fetchTotals(); // Load totals from the database on page load
 
-        rows.forEach(row => {
-            const weight = parseFloat(row.querySelector('.weight').textContent) || 0;
-            const score = parseFloat(row.querySelector('.score').textContent) || 0;
+    document.getElementById("submitButton").addEventListener("click", function () {
+        submitData(); // Save data to the database when submitting
+    });
 
-            // Calculate Weighted Average
-            const weightedAverage = (weight * score) / 100;
-            row.querySelector('.weightedAverage').textContent = weightedAverage.toFixed(2);
-        });
+    document.querySelector("#tableBody").addEventListener("input", function (event) {
+        let targetCell = event.target.closest("td");
+
+        // Only recalculate when editing the Weight column (index 3)
+        if (targetCell && targetCell.cellIndex === 3) {
+            calculateTotals();
+        }
+    });
+});
+
+function calculateTotals() {
+    let totals = {
+        'ORGANIZATION CAPACITY': 0,
+        'BUSINESS PROCESS': 0,
+        'CUSTOMER': 0,
+        'FINANCIAL': 0
+    };
+    let overallTotal = 0;
+
+    document.querySelectorAll("#tableBody tr").forEach(row => {
+        let perspective = row.cells[0]?.innerText.trim().toUpperCase();
+        let weight = parseFloat(row.cells[3]?.innerText.trim()) || 0;
+
+        if (totals.hasOwnProperty(perspective)) {
+            totals[perspective] += weight;
+        }
+        overallTotal += weight;
+    });
+
+    if (overallTotal > 100) {
+        alert("Error: The total percentage cannot exceed 100%. Please adjust the values.");
+        return;
     }
 
-    // This function will be called to populate data from the server (example)
-    function populateTable(data) {
-        const tableBody = document.getElementById('tableBody');
-        
-        // Clear existing rows (if any)
-        tableBody.innerHTML = '';
+    document.getElementById("orgCapacityTotal").innerText = totals['ORGANIZATION CAPACITY'].toFixed(2) + "%";
+    document.getElementById("businessOrgTotal").innerText = totals['BUSINESS PROCESS'].toFixed(2) + "%";
+    document.getElementById("customerTotal").innerText = totals['CUSTOMER'].toFixed(2) + "%";
+    document.getElementById("financialTotal").innerText = totals['FINANCIAL'].toFixed(2) + "%";
+    document.getElementById("overallTotal").innerText = overallTotal.toFixed(2) + "%";
+}
 
-        data.forEach(item => {
-            // Create a new row and insert the fetched data
-            const row = document.createElement('tr');
-
-            row.innerHTML = `
-                <td contenteditable="true">${item.perspective}</td>
-                <td contenteditable="true">${item.ssmartObjective}</td>
-                <td contenteditable="true">${item.initiative}</td>
-                <td contenteditable="true">${item.uom}</td>
-                <td contenteditable="true">${item.di}</td>
-                <td class="weight" contenteditable="true">${item.weight}</td>
-                <td contenteditable="true">${item.target}</td>
-                <td contenteditable="true">${item.actualAchievement}</td>
-                <td class="score" contenteditable="true">${item.score}</td>
-                <td class="weightedAverage">0.00</td>
-            `;
-            
-            tableBody.appendChild(row);
-        });
-
-        // After populating, trigger the weighted average calculation
-        calculateWeightedAverage();
-    }
-
-    // Example of how to fetch data from a server and populate the table
-    document.getElementById('FetchButton').addEventListener('click', () => {
-        // Simulating a fetch call with mock data (replace with your actual fetch logic)
-        const mockData = [
-            {
-                perspective: 'Perspective 1',
-                ssmartObjective: 'Objective 1',
-                initiative: 'Initiative 1',
-                uom: 'Unit 1',
-                di: 'D/I 1',
-                weight: 50,
-                target: '100',
-                actualAchievement: '80',
-                score: 70
-            },
-            {
-                perspective: 'Perspective 2',
-                ssmartObjective: 'Objective 2',
-                initiative: 'Initiative 2',
-                uom: 'Unit 2',
-                di: 'D/I 2',
-                weight: 60,
-                target: '120',
-                actualAchievement: '90',
-                score: 80
+function fetchTotals() {
+    fetch('workplancalc.php?action=fetch')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                let totals = data.totals;
+                document.getElementById("orgCapacityTotal").innerText = parseFloat(totals.orgCapacity).toFixed(2) + "%";
+                document.getElementById("businessOrgTotal").innerText = parseFloat(totals.businessProcess).toFixed(2) + "%";
+                document.getElementById("customerTotal").innerText = parseFloat(totals.customer).toFixed(2) + "%";
+                document.getElementById("financialTotal").innerText = parseFloat(totals.financial).toFixed(2) + "%";
+                document.getElementById("overallTotal").innerText = parseFloat(totals.overallTotal).toFixed(2) + "%";
+            } else {
+                console.warn("No stored data found:", data.error);
             }
-        ];
+        })
+        .catch(error => console.error("Error fetching totals:", error));
+}
 
-        // Populate table with the fetched data
-        populateTable(mockData);
-    });
+function submitData() {
+    let totals = {
+        'ORGANIZATION CAPACITY': parseFloat(document.getElementById("orgCapacityTotal").innerText) || 0,
+        'BUSINESS PROCESS': parseFloat(document.getElementById("businessOrgTotal").innerText) || 0,
+        'CUSTOMER': parseFloat(document.getElementById("customerTotal").innerText) || 0,
+        'FINANCIAL': parseFloat(document.getElementById("financialTotal").innerText) || 0
+    };
 
-    // Recalculate the weighted averages when the user edits a cell
-    document.querySelectorAll('#tableBody td').forEach(cell => {
-        cell.addEventListener('input', calculateWeightedAverage);
-    });
+    let overallTotal = parseFloat(document.getElementById("overallTotal").innerText) || 0;
+
+    fetch('workplancalc.php?action=save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ totals: totals, overallTotal: overallTotal })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Data successfully saved.");
+            } else {
+                alert("Error saving data: " + data.error);
+            }
+        })
+        .catch(error => console.error("Submission error:", error));
+}
