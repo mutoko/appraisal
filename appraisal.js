@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
    })
    .then((response) => response.json()) // Parse JSON response
    .then((data) => {
-    // Loop through the data and dynamically create rows in the table
+    // Loop through the data and dynamically create rows in the t
     data.forEach((rowData) => {
         const newRow = document.createElement("tr");
 
