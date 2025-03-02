@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function fetchEmployeesData() {
-        fetch("workplanfetch.php")
+        fetch("appraisalfetch.php")
             .then((response) => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
