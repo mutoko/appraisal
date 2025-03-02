@@ -85,35 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
     this.innerText = isEditable ? "Done" : "Edit";
   });
 
-  // Add a new row
-  addRowButton.addEventListener("click", function () {
-    const newRow = document.createElement("tr");
-    newRow.innerHTML = `
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true" >0.00%</td>
-      <td contenteditable="true" >0.00%</td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-      <td contenteditable="true"></td>
-    `;
-    tableBody.appendChild(newRow);
-    attachRowListeners(newRow); // Attach listeners to the new row
-  });
-
+ 
 // Formats a number as a percentage 2 decimal places
   function formatPercentage(value) {
     let num = parseFloat(value);
@@ -167,25 +139,25 @@ document.addEventListener("DOMContentLoaded", function () {
         const cells = row.querySelectorAll("td");
         const rowData = {
           Perspectives: cells[0].innerText.trim(),
-          StrategicObjective: cells[1].innerText.trim(),
-          SSMARTAObjectives: cells[2].innerText.trim(),
-          WeightSSMARTAObjective: cells[3].innerText.trim().replace("%", ""),
-          TargetSSMARTAObjective: cells[4].innerText.trim().replace("%", ""),
-          Initiatives: cells[5].innerText.trim(),
-          SpecificActivities: cells[6].innerText.trim(),
-          ExpectedOutput: cells[7].innerText.trim(),
-          January: cells[8].innerText.trim(),
-          February: cells[9].innerText.trim(),
-          March: cells[10].innerText.trim(),
-          April: cells[11].innerText.trim(),
-          May: cells[12].innerText.trim(),
-          June: cells[13].innerText.trim(),
-          July: cells[14].innerText.trim(),
-          August: cells[15].innerText.trim(),
-          September: cells[16].innerText.trim(),
-          October: cells[17].innerText.trim(),
-          November: cells[18].innerText.trim(),
-          December: cells[19].innerText.trim(),
+        SSMARTAObjectives: cells[1].innerText.trim(),
+        Initiatives: cells[2].innerText.trim(),
+        UoM: cells[3].innerText.trim(),
+        DI: cells[4].innerText.trim(),
+        WeightSSMARTAObjective: cells[5].innerText.trim(),
+        TargetSSMARTAObjective: cells[6].innerText.trim(),
+        Annual_Actual_Achievement: cells[7].innerText.trim(),
+        Annual_Score: cells[8].innerText.trim(),
+        Annual_Weighted_Average: cells[9].innerText.trim(),
+        Annual_Detailed_Explanation: cells[10].innerText.trim(),
+        Annual_Evidence: cells[11].innerText.trim(),
+        Supervisor_WeightSSMARTAObjective: cells[12].innerText.trim(),
+        Supervisor_TargetSSMARTAObjective: cells[13].innerText.trim(),
+        Supervisor_ActualAchievement: cells[14].innerText.trim(),
+        Supervisor_Score: cells[15].innerText.trim(),
+        Supervisor_Weighted_Average: cells[16].innerText.trim(),
+        Supervisor_Comments: cells[17].innerText.trim(),
+        Supervisor_IdentifiedGaps: cells[18].innerText.trim(),
+        Supervisor_Strategies: cells[19].innerText.trim()
         };
         submittedData.push(rowData);
       });
@@ -215,42 +187,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 
-
-
-    // Add event listener for the add link
-    const addButton = row.querySelector(".add-link");
-    addButton.addEventListener("click", function (event) {
-      event.preventDefault();
-      const newRow = document.createElement("tr");
-      newRow.innerHTML = `
-        <td contenteditable="false" class="Perspectives"></td>
-        <td contenteditable="true" class="StrategicObjective"></td>
-        <td contenteditable="true" class="SSMARTAObjectives"></td>
-        <td contenteditable="true" class="WeightSSMARTAObjective">${formatPercentage(0)}</td>
-        <td contenteditable="true" class="TargetSSMARTAObjective">${formatPercentage(0)}</td>
-        <td contenteditable="true" class="Initiatives"></td>
-        <td contenteditable="true" class="SpecificActivities"></td>
-        <td contenteditable="true" class="ExpectedOutput"></td>
-        <td contenteditable="true" class="January"></td>
-        <td contenteditable="true" class="February"></td>
-        <td contenteditable="true" class="March"></td>
-        <td contenteditable="true" class="April"></td>
-        <td contenteditable="true" class="May"></td>
-        <td contenteditable="true" class="June"></td>
-        <td contenteditable="true" class="July"></td>
-        <td contenteditable="true" class="August"></td>
-        <td contenteditable="true" class="September"></td>
-        <td contenteditable="true" class="October"></td>
-        <td contenteditable="true" class="November"></td>
-        <td contenteditable="true" class="December"></td>
-         <td>
-                  <a href="#" class="add-link" contenteditable="false">Add</a> | <a href="#" class="delete-link" contenteditable="false">Delete</a>
-              </td>
-      `;
-      row.after(newRow);
-      attachRowListeners(newRow);
-    });
-  }
+   }
 
  // ADD DRAG OPTION
 
