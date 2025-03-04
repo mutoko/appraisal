@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   
       if (!isValid) {
-          alert("Scores must be between 0-100. Fix highlighted fields.");
+          alert("Score must be between 0-100. Fix highlighted fields.");
           invalidCells[0].scrollIntoView({ behavior: "smooth" });
           return false;
       }
