@@ -26,7 +26,8 @@
 
 /* Ensure full height for the entire page */
 html, body {
-    height: 100%; /* Take full viewport height */
+    height: 100%;
+    width: 100%; 
     margin: 0;
     padding: 0;
     display: flex;
@@ -38,7 +39,7 @@ html, body {
 main {
     display: flex;
     flex-direction: column;
-    flex-grow: 1; /* Allow main to take up all remaining space */
+    flex-grow: 1; 
 }
 
 /* WORKPLAN TABLE */
@@ -74,7 +75,7 @@ main {
 
 /* Sticky Header */
 .records th {
-    position: sticky;
+    position: sticky; /* Ensure the header sticks to the top */
     top: 0;
     background-color: var(--color-primary);
     font-weight: bold;
@@ -108,7 +109,8 @@ main {
 }
 
 /* Button Styling */
-.button-container {
+.button-container 
+{
     text-align: center;
     margin-top: 20px;
 }
@@ -135,19 +137,22 @@ button:active {
 }
 
 /* Dotted Border for Editable Table (Changed to dashed black) */
-.editable-table td {
+.editable-table td 
+{
     border: 2px dashed black !important;
     background-color: #f0f0f0; /* Cell background changes to indicate editability */
 }
 
 
-@keyframes colorChange {
+@keyframes colorChange 
+{
     0% { border-color: white; }
     50% { border-color: blue; }
     100% { border-color: white; }
 }
 
-#loadingSpinner {
+#loadingSpinner 
+{
     animation: colorChange 1s infinite;
     display: block;
     margin: 10px auto; /* Center the spinner */
@@ -156,4 +161,9 @@ button:active {
 .progressb
 {
 padding-bottom: .5rem;
+}
+
+/*dashed when edit button is clicked */
+.dashed-border, .dashed-border td, .dashed-border th {
+    border: 3px dashed black !important; /* Blue dashed borders */
 }

@@ -66,26 +66,26 @@ document.addEventListener("DOMContentLoaded", function () {
  
                          const newRow = document.createElement("tr");
                          newRow.innerHTML = `
-                             <td><strong>${row.Perspectives || ""}</strong></td>
-                             <td>${row.SSMARTAObjectives || ""}</td>
-                             <td>${row.Initiatives || ""}</td>
-                             <td>${diValue}</td> <!-- Updated DI column -->
-                             <td>${uomValue}</td> <!-- Updated UoM column -->
-                             <td>${row.WeightSSMARTAObjective || "0%"}</td>
-                             <td>${row.TargetSSMARTAObjective || "0%"}</td>
-                             <td>${achievementValue}</td>
-                             <td>${score}</td>
-                             <td></td>
-                             <td></td>
-                             <td></td>
-                             <td>${row.WeightSSMARTAObjective || "0%"}</td>
-                             <td>${row.TargetSSMARTAObjective || "0%"}</td>
-                             <td>${achievementValue}</td>
-                             <td>${score}</td>
-                             <td></td>
-                             <td></td>
-                             <td></td>
-                             <td></td>
+                             <td contenteditable="false"><strong>${row.Perspectives || ""}</strong></td>
+                             <td contenteditable="false">${row.SSMARTAObjectives || ""}</td>
+                             <td contenteditable="false">${row.Initiatives || ""}</td>
+                             <td contenteditable="false">${diValue}</td> <!-- Updated DI column -->
+                             <td contenteditable="false">${uomValue}</td> <!-- Updated UoM column -->
+                             <td contenteditable="false">${row.WeightSSMARTAObjective || "0%"}</td>
+                             <td contenteditable="false">${row.TargetSSMARTAObjective || "0%"}</td>
+                             <td contenteditable="false">${achievementValue}</td>
+                             <td contenteditable="false">${score}</td>
+                             <td contenteditable="false"></td>
+                             <td contenteditable="false"></td>
+                             <td contenteditable="false"></td>
+                             <td contenteditable="false">${row.WeightSSMARTAObjective || "0%"}</td>
+                             <td contenteditable="false">${row.TargetSSMARTAObjective || "0%"}</td>
+                             <td contenteditable="false">${achievementValue}</td>
+                             <td contenteditable="false">${score}</td>
+                             <td contenteditable="false"></td>
+                             <td contenteditable="false"></td>
+                             <td contenteditable="false"></td>
+                             <td contenteditable="false"></td>
                         `;
                         tableBody.appendChild(newRow);
                     });
@@ -100,4 +100,31 @@ document.addEventListener("DOMContentLoaded", function () {
                 }, 1000);
             });
     }
+});
+document.getElementById("editButton").addEventListener("click", function () {
+    const table = document.getElementById("editableTable");
+    const rows = table.getElementsByTagName("tr");
+    let isEditable = table.classList.contains("dashed-border"); // Check if already editable
+
+    for (let i = 1; i < rows.length; i++) { // Skip header row
+        const cells = rows[i].getElementsByTagName("td");
+        for (let j = 0; j < cells.length; j++) {
+            if (j === 4 || j === 8 || j === 10 || j === 11) { // Only make column 4,8,10 and 1 editable
+                cells[j].contentEditable = !isEditable ? "true" : "false";
+            } else {
+                cells[j].contentEditable = "false"; // Keep all other columns uneditable
+            }
+        }
+    }
+
+    // Toggle button text between "Appraise" and "Done"
+    const button = document.getElementById("editButton");
+    if (button.textContent.trim() === "Appraise") {
+        button.textContent = "Done";
+    } else {
+        button.textContent = "Appraise";
+    }
+
+    // Add or remove dashed border style
+    table.classList.toggle("dashed-border");
 });
