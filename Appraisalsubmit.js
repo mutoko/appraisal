@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return isValid;
   }
 
-  // In Appraisalsubmit.js, update checkColumnSumValidity function
+  // update checkColumnSumValidity function to check number to check score be between 0 and 100
   function validateBeforeSubmit() {
       let isValid = true;
       const invalidCells = [];
