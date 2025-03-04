@@ -31,13 +31,53 @@ document.addEventListener("DOMContentLoaded", function () {
       alert("Error fetching existing data");
     });
 
+    function checkscoreValue() {
+    let isValid = true;
+    document.querySelectorAll("#tableBody tr").forEach((row) => {
+      let targetCell = row.cells[8]; // Targeting score column
+      let target = parseFloat(targetCell.innerText.replace("%", "")) || 0;
+      if (target > 100) {
+        alert("Error: score value cannot exceed 100%.");
+        isValid = false;
+      }
+    });
+    return isValid;
+  }
+
+  // In Appraisalsubmit.js, update checkColumnSumValidity function
+  function validateBeforeSubmit() {
+      let isValid = true;
+      const invalidCells = [];
+  
+      document.querySelectorAll("#tableBody tr").forEach(row => {
+          const cells = row.querySelectorAll("td");
+          // Check columns 8 and 15
+          [8, 15].forEach(colIndex => {
+              const cell = cells[colIndex];
+              const value = parseFloat(cell.textContent.replace("%", ""));
+              if (isNaN(value) || value < 0 || value > 100) {
+                  cell.classList.add("invalid-cell");
+                  invalidCells.push(cell);
+                  isValid = false;
+              }
+          });
+      });
+  
+      if (!isValid) {
+          alert("Scores must be between 0-100. Fix highlighted fields.");
+          invalidCells[0].scrollIntoView({ behavior: "smooth" });
+          return false;
+      }
+      return true;
+  }
   // Event listener for the Submit button
   submitButton.addEventListener("click", function (event) {
     // Prevent submission if validation fails
-    if (!checkColumnSumValidity() || !checkTargetValue()) {
+    if (!validateBeforeSubmit()) {
       event.preventDefault();
       return;
-    }
+  }
+  // Proceed with submission...
 
     const rows = tableBody.querySelectorAll("tr");
     const submittedData = [];

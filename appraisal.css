@@ -167,3 +167,9 @@ padding-bottom: .5rem;
 .dashed-border, .dashed-border td, .dashed-border th {
     border: 3px dashed black !important; /* Blue dashed borders */
 }
+
+/* In Appraisal.css */
+.invalid-cell {
+    border: 2px solid #ff4444 !important;
+    background-color: #ffebee !important;
+}

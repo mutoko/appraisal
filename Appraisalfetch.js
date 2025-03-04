@@ -128,3 +128,4 @@ document.getElementById("editButton").addEventListener("click", function () {
     // Add or remove dashed border style
     table.classList.toggle("dashed-border");
 });
+

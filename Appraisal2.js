@@ -104,3 +104,31 @@ function fetchWorkplanData() {
     });
 }
 
+// In Appraisal.js - Validation logic
+function initValidation() {
+    document.getElementById("tableBody").addEventListener("input", function (e) {
+        const cell = e.target;
+        const columnIndex = cell.cellIndex; // Get column index
+
+        // Only validate columns 8 and 15
+        if (![8, 15].includes(columnIndex)) return;
+
+        const rawValue = cell.textContent.replace("%", "").trim();
+        const value = parseFloat(rawValue);
+
+        // Clear previous formatting
+        cell.style.backgroundColor = "";
+        cell.classList.remove("invalid-cell");
+
+        if (isNaN(value) || value < 0 || value > 100) {
+            cell.style.backgroundColor = "#ffebee";
+            cell.classList.add("invalid-cell");
+            cell.title = "Score must be between 0-100";
+        } else {
+            cell.textContent = `${value}%`; // Auto-format valid scores
+        }
+    });
+}
+
+// Call this after loading data
+initValidation();
