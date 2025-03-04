@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
-    // Start observing
+    
     if (tableBody) {
         calculateAllRows(); // Initial calculation
         handleChanges();    // Input change handler
