@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function() {
         return parseFloat(value.replace(/[^0-9.]/g, '')) || 0;
     }
 
-    // Calculate Score (column 8)
+    // Calculate Score percentage (column 8)
     function calculateCustomValue(row) {
         const target = parsePercentage(row.cells[6]?.textContent || "0");
         const actual = parsePercentage(row.cells[7]?.textContent || "0");
