@@ -1,26 +1,41 @@
 document.addEventListener("DOMContentLoaded", function () {
   const tableBody = document.getElementById("tableBody");
-  const submitButton = document.getElementById("submitButton"); // Reference to the submit button
+  const submitButton = document.getElementById("submitButton");
 
   // Fetch existing data on page load
   fetch("Appraisalsubmit.php")
     .then((response) => response.json())
     .then((data) => {
       if (data.status === "success") {
-        const rows = data.appraisals; // Assuming data.appraisals contains the rows
+        const rows = data.appraisals;
         rows.forEach((rowData) => {
           const row = document.createElement("tr");
-          for (const key in rowData) {
+          const values = Object.values(rowData);
+          let uomHasPercent = false;
+
+          values.forEach((value, index) => {
             const cell = document.createElement("td");
-            let value = rowData[key];
-            // Check if the value is a decimal number (assumes decimal values should have '%' sign)
-            if (!isNaN(value) && value.includes('.')) {
-              value = value + "%"; // Append '%' symbol
+            let displayValue = value;
+
+            // Check UoM column (index 3)
+            if (index === 3) {
+              uomHasPercent = String(value).includes('%');
             }
-            cell.textContent = value;
+
+            // Format percentages
+            if (index === 5) { // Column 5 - Always add %
+              displayValue = parseFloat(value) + '%';
+            } else if ([6, 7].includes(index)) { // Columns 6-7
+              if (uomHasPercent && !isNaN(value)) {
+                displayValue = parseFloat(value) + '%';
+              }
+            }
+
+            cell.textContent = displayValue;
             row.appendChild(cell);
-          }
-          tableBody.appendChild(row); // Append row to table
+          });
+
+          tableBody.appendChild(row);
         });
       } else {
         alert(data.message);
@@ -31,10 +46,10 @@ document.addEventListener("DOMContentLoaded", function () {
       alert("Error fetching existing data");
     });
 
-    function checkscoreValue() {
+  function checkscoreValue() {
     let isValid = true;
     document.querySelectorAll("#tableBody tr").forEach((row) => {
-      let targetCell = row.cells[8]; // Targeting score column
+      let targetCell = row.cells[8];
       let target = parseFloat(targetCell.innerText.replace("%", "")) || 0;
       if (target > 100) {
         alert("Error: score value cannot exceed 100%.");
@@ -44,30 +59,29 @@ document.addEventListener("DOMContentLoaded", function () {
     return isValid;
   }
 
-  // update checkColumnSumValidity function to check number to check score be between 0 and 100
   function validateBeforeSubmit() {
     let isValid = true;
     const invalidCells = [];
 
     document.querySelectorAll("#tableBody tr").forEach(row => {
         const cells = row.querySelectorAll("td");
-        const measureCell = cells[3].textContent.trim(); // Column 3 (Measure)
-        const isPercentage = measureCell.includes('%'); // Check if Measure is a percentage
+        const measureCell = cells[3].textContent.trim();
+        const isPercentage = measureCell.includes('%');
 
-        // Columns to validate (6 and 7)
         [6, 7].forEach(colIndex => {
             const cell = cells[colIndex];
-            const value = parseFloat(cell.textContent.replace("%", ""));
+            const rawValue = cell.textContent.replace("%", "");
+            const value = parseFloat(rawValue);
 
             if (isPercentage) {
-                // If Measure is a percentage, Target and Actual Achievement must be between 0 and 100
-                if (isNaN(value) || value < 0 || value > 100) {
+                if (isNaN(value) || value !== 100) {
                     cell.classList.add("invalid-cell");
                     invalidCells.push(cell);
                     isValid = false;
                 }
-            } else {
-                // If Measure is not a percentage, Target and Actual Achievement must be >= 0 but can exceed 100
+            } 
+            else 
+            {
                 if (isNaN(value) || value < 0) {
                     cell.classList.add("invalid-cell");
                     invalidCells.push(cell);
@@ -78,64 +92,59 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     if (!isValid) {
-        alert("Validation failed. highlighted fields should be between 1-100.");
+        alert("Validation failed. Highlighted fields should be between 0-100 when Unit of Measure is %.");
         invalidCells[0].scrollIntoView({ behavior: "smooth" });
         return false;
     }
-    return true;
-}
-  // Event listener for the Submit button
-  submitButton.addEventListener("click", function (event) {
-    // Prevent submission if validation fails
-    if (!validateBeforeSubmit()) {
-      event.preventDefault();
-      return;
+    return checkscoreValue();
   }
-  // Proceed with submission...
+
+  submitButton.addEventListener("click", function (event) {
+    event.preventDefault();
+    
+    if (!validateBeforeSubmit()) return;
 
     const rows = tableBody.querySelectorAll("tr");
     const submittedData = [];
 
-    // Extracting table data into an array of objects
     rows.forEach((row) => {
       const cells = row.querySelectorAll("td");
-      const rowData = {
-        Perspectives: cells[0].innerText.trim(),
-        SSMARTAObjectives: cells[1].innerText.trim(),
-        Initiatives: cells[2].innerText.trim(),
-        UoM: cells[3].innerText.trim(),
-        DI: cells[4].innerText.trim(),
-        WeightSSMARTAObjective: cells[5].innerText.trim(),
-        TargetSSMARTAObjective: cells[6].innerText.trim(),
-        Annual_Actual_Achievement: cells[7].innerText.trim(),
-        Annual_Score: cells[8].innerText.trim(),
-        Annual_Weighted_Average: cells[9].innerText.trim(),
-        Annual_Detailed_Explanation: cells[10].innerText.trim(),
-        Annual_Evidence: cells[11].innerText.trim(),
-        Supervisor_WeightSSMARTAObjective: cells[12].innerText.trim(),
-        Supervisor_TargetSSMARTAObjective: cells[13].innerText.trim(),
-        Supervisor_ActualAchievement: cells[14].innerText.trim(),
-        Supervisor_Score: cells[15].innerText.trim(),
-        Supervisor_Weighted_Average: cells[16].innerText.trim(),
-        Supervisor_Comments: cells[17].innerText.trim(),
-        Supervisor_IdentifiedGaps: cells[18].innerText.trim(),
-        Supervisor_Strategies: cells[19].innerText.trim()
-      };
+      const rowData = {};
+
+      cells.forEach((cell, index) => {
+        let value = cell.textContent.trim();
+        
+        // Remove % before submission for relevant columns
+        if ([5, 6, 7].includes(index)) {
+          value = value.replace("%", "");
+        }
+
+        // Map to correct properties
+        const columnMap = [
+          'Perspectives', 'SSMARTAObjectives', 'Initiatives', 'UoM', 'DI',
+          'WeightSSMARTAObjective', 'TargetSSMARTAObjective', 'Annual_Actual_Achievement',
+          'Annual_Score', 'Annual_Weighted_Average', 'Annual_Detailed_Explanation',
+          'Annual_Evidence', 'Supervisor_WeightSSMARTAObjective', 
+          'Supervisor_TargetSSMARTAObjective', 'Supervisor_ActualAchievement',
+          'Supervisor_Score', 'Supervisor_Weighted_Average', 'Supervisor_Comments',
+          'Supervisor_IdentifiedGaps', 'Supervisor_Strategies'
+        ];
+
+        rowData[columnMap[index]] = value;
+      });
+
       submittedData.push(rowData);
     });
 
-    // Send data to the server
     fetch("Appraisalsubmit.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ submittedData }), // Send data as JSON
+      body: JSON.stringify({ submittedData }),
     })
       .then((response) => response.json())
       .then((data) => {
         alert(data.message);
-        if (data.status === "success") {
-          location.reload(); // Reload the page to reflect the changes
-        }
+        data.status === "success" && location.reload();
       })
       .catch((error) => {
         console.error("Error submitting data:", error);
@@ -143,15 +152,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   });
 
-  // Function to check column sum validity (if required for validation)
-  function checkColumnSumValidity() {
-   
-    return true;
-  }
-
-  // Function to check target value (if required for validation)
-  function checkTargetValue() {
-   
-    return true;
-  }
+  // Empty validation placeholders
+  function checkColumnSumValidity() { return true; }
+  function checkTargetValue() { return true; }
 });
