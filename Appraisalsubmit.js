@@ -46,30 +46,44 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // update checkColumnSumValidity function to check number to check score be between 0 and 100
   function validateBeforeSubmit() {
-      let isValid = true;
-      const invalidCells = [];
-  
-      document.querySelectorAll("#tableBody tr").forEach(row => {
-          const cells = row.querySelectorAll("td");
-          // Check columns 7 and 15
-          [7, 15].forEach(colIndex => {
-              const cell = cells[colIndex];
-              const value = parseFloat(cell.textContent.replace("%", ""));
-              if (isNaN(value) || value < 0 || value > 100) {
-                  cell.classList.add("invalid-cell");
-                  invalidCells.push(cell);
-                  isValid = false;
-              }
-          });
-      });
-  
-      if (!isValid) {
-          alert("Score must be between 0-100. Fix highlighted fields.");
-          invalidCells[0].scrollIntoView({ behavior: "smooth" });
-          return false;
-      }
-      return true;
-  }
+    let isValid = true;
+    const invalidCells = [];
+
+    document.querySelectorAll("#tableBody tr").forEach(row => {
+        const cells = row.querySelectorAll("td");
+        const measureCell = cells[3].textContent.trim(); // Column 3 (Measure)
+        const isPercentage = measureCell.includes('%'); // Check if Measure is a percentage
+
+        // Columns to validate (6 and 7)
+        [6, 7].forEach(colIndex => {
+            const cell = cells[colIndex];
+            const value = parseFloat(cell.textContent.replace("%", ""));
+
+            if (isPercentage) {
+                // If Measure is a percentage, Target and Actual Achievement must be between 0 and 100
+                if (isNaN(value) || value < 0 || value > 100) {
+                    cell.classList.add("invalid-cell");
+                    invalidCells.push(cell);
+                    isValid = false;
+                }
+            } else {
+                // If Measure is not a percentage, Target and Actual Achievement must be >= 0 but can exceed 100
+                if (isNaN(value) || value < 0) {
+                    cell.classList.add("invalid-cell");
+                    invalidCells.push(cell);
+                    isValid = false;
+                }
+            }
+        });
+    });
+
+    if (!isValid) {
+        alert("Validation failed. Please check the highlighted fields.");
+        invalidCells[0].scrollIntoView({ behavior: "smooth" });
+        return false;
+    }
+    return true;
+}
   // Event listener for the Submit button
   submitButton.addEventListener("click", function (event) {
     // Prevent submission if validation fails
