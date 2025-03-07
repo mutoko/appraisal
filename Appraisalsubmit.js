@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     if (!isValid) {
-        alert("Validation failed. Please check the highlighted fields.");
+        alert("Validation failed. highlighted fields should be between 1-100.");
         invalidCells[0].scrollIntoView({ behavior: "smooth" });
         return false;
     }
