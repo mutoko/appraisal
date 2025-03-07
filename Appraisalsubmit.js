@@ -51,8 +51,8 @@ document.addEventListener("DOMContentLoaded", function () {
   
       document.querySelectorAll("#tableBody tr").forEach(row => {
           const cells = row.querySelectorAll("td");
-          // Check columns 8 and 15
-          [8, 15].forEach(colIndex => {
+          // Check columns 7 and 15
+          [7, 15].forEach(colIndex => {
               const cell = cells[colIndex];
               const value = parseFloat(cell.textContent.replace("%", ""));
               if (isNaN(value) || value < 0 || value > 100) {

@@ -109,7 +109,7 @@ document.getElementById("editButton").addEventListener("click", function () {
     for (let i = 1; i < rows.length; i++) { // Skip header row
         const cells = rows[i].getElementsByTagName("td");
         for (let j = 0; j < cells.length; j++) {
-            if (j === 4 || j === 8 || j === 10 || j === 11) { // Only make column 4,8,10 and 1 editable
+            if (j === 3 || j === 7 || j === 10 || j === 11) { // Only make column 4,8,10 and 11 editable
                 cells[j].contentEditable = !isEditable ? "true" : "false";
             } else {
                 cells[j].contentEditable = "false"; // Keep all other columns uneditable
