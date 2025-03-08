@@ -13,27 +13,42 @@ document.addEventListener("DOMContentLoaded", function () {
           const values = Object.values(rowData);
           let uomHasPercent = false;
 
-          values.forEach((value, index) => {
-            const cell = document.createElement("td");
-            let displayValue = value;
+          // In the values.forEach loop, update the section handling indices 13 and 14:
+values.forEach((value, index) => {
+  const cell = document.createElement("td");
+  let displayValue = value;
 
-            // Check UoM column (index 3)
-            if (index === 3) {
-              uomHasPercent = String(value).includes('%');
-            }
+  // Check UoM column (index 3)
+  if (index === 3) {
+    uomHasPercent = String(value).includes('%');
+  }
 
-            // Format percentages
-            if (index === 5) { // Column 5 - Always add %
-              displayValue = parseFloat(value) + '%';
-            } else if ([6, 7].includes(index)) { // Columns 6-7
-              if (uomHasPercent && !isNaN(value)) {
-                displayValue = parseFloat(value) + '%';
-              }
-            }
+  // Format percentages
+  if (index === 5) { 
+    displayValue = parseFloat(value) + '%';
+  } else if ([6, 7, 13].includes(index)) { 
+    if (uomHasPercent && !isNaN(value)) {
+      displayValue = parseFloat(value) + '%';
+    }
+  }
 
-            cell.textContent = displayValue;
-            row.appendChild(cell);
-          });
+  // Handle columns 13 and 14 separately
+  if (index === 12) 
+    { // Always add % for Supervisor's Target (column 13)
+    if (!isNaN(value)) {
+      displayValue = parseFloat(value) + '%';
+    }
+  } 
+  else if (index === 14) 
+    { // Follow UoM check for Actual Achievement
+    if (uomHasPercent && !isNaN(value)) {
+      displayValue = parseFloat(value) + '%';
+    }
+  }
+
+  cell.textContent = displayValue;
+  row.appendChild(cell);
+});
 
           tableBody.appendChild(row);
         });
