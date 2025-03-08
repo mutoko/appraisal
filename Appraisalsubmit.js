@@ -66,8 +66,8 @@ values.forEach((value, index) => {
     document.querySelectorAll("#tableBody tr").forEach((row) => {
       let targetCell = row.cells[8];
       let target = parseFloat(targetCell.innerText.replace("%", "")) || 0;
-      if (target > 100) {
-        alert("Error: score value cannot exceed 100%.");
+      if (target < 100) {
+        alert("Error: score value cannot be negative.");
         isValid = false;
       }
     });
