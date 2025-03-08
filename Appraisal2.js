@@ -64,42 +64,5 @@ function fetchWorkplanData() {
             console.error("Fetch error:", error);
             tableBody.innerHTML = "<tr><td colspan='20'>Error loading data</td></tr>";
         });
-
-        
-
-     // ADD DRAG OPTION
-     const tableContainer = document.querySelector('.records');
-     let isDragging = false;
-     let startX, scrollLeft;
-
-     // Start dragging
-     tableContainer.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        startX = e.pageX - tableContainer.offsetLeft;
-        scrollLeft = tableContainer.scrollLeft;
-        tableContainer.style.cursor = 'grabbing';
-     });
-
-     // Stop dragging
-     tableContainer.addEventListener('mouseup', () => {
-        isDragging = false;
-        tableContainer.style.cursor = 'grab';
-     });
-
-     // Dragging movement
-     tableContainer.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        e.preventDefault(); // Prevent text selection
-        const x = e.pageX - tableContainer.offsetLeft;
-        const scroll = (x - startX) * 2; // Adjust scroll speed here
-        tableContainer.scrollLeft = scrollLeft - scroll;
-     });
-
-     // Prevent mouse leaving while dragging
-     tableContainer.addEventListener('mouseleave', () => {
-        if (isDragging) {
-            isDragging = false;
-            tableContainer.style.cursor = 'grab';
-        }
-    });
+  
 }
