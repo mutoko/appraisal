@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const submitButton = document.getElementById("submitButton");
 
   // Fetch existing data on page load
-  fetch("Appraisalsubmit.php")
+  fetch("adminAppraisalsubmit.php")
     .then((response) => response.json())
     .then((data) => {
       if (data.status === "success") {
@@ -77,39 +77,39 @@ values.forEach((value, index) => {
   function validateBeforeSubmit() {
     let isValid = true;
     const invalidCells = [];
-
+  
     document.querySelectorAll("#tableBody tr").forEach(row => {
-        const cells = row.querySelectorAll("td");
-        const measureCell = cells[3].textContent.trim();
-        const isPercentage = measureCell.includes('%');
-
-        [6, 7].forEach(colIndex => {
-            const cell = cells[colIndex];
-            const rawValue = cell.textContent.replace("%", "");
-            const value = parseFloat(rawValue);
-
-            if (isPercentage) {
-                if (isNaN(value) || value !== 100) {
-                    cell.classList.add("invalid-cell");
-                    invalidCells.push(cell);
-                    isValid = false;
-                }
-            } 
-            else 
-            {
-                if (isNaN(value) || value < 0) {
-                    cell.classList.add("invalid-cell");
-                    invalidCells.push(cell);
-                    isValid = false;
-                }
-            }
-        });
+      const cells = row.querySelectorAll("td");
+      const measureCell = cells[3].textContent.trim();
+      const isPercentage = measureCell.includes('%');
+  
+      [6, 7, 13, 14].forEach(colIndex => {
+        const cell = cells[colIndex];
+        const rawValue = cell.textContent.replace("%", "");
+        const value = parseFloat(rawValue);
+  
+        if (isPercentage) {
+          // Validate percentage values between 1-100
+          if (isNaN(value) || value < 1 || value > 100) {
+            cell.classList.add("invalid-cell");
+            invalidCells.push(cell);
+            isValid = false;
+          }
+        } else {
+          // Validate non-percentage values >= 0
+          if (isNaN(value) || value < 0) {
+            cell.classList.add("invalid-cell");
+            invalidCells.push(cell);
+            isValid = false;
+          }
+        }
+      });
     });
-
+  
     if (!isValid) {
-        alert("Validation failed. Highlighted fields should be between 0-100 when Unit of Measure is %.");
-        invalidCells[0].scrollIntoView({ behavior: "smooth" });
-        return false;
+      alert("Validation failed. Highlighted fields should be 1-100 when Unit of Measure is %.");
+      invalidCells[0].scrollIntoView({ behavior: "smooth" });
+      return false;
     }
     return checkscoreValue();
   }
@@ -151,7 +151,7 @@ values.forEach((value, index) => {
       submittedData.push(rowData);
     });
 
-    fetch("Appraisalsubmit.php", {
+    fetch("adminAppraisalsubmit.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ submittedData }),

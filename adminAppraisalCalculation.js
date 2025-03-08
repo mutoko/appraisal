@@ -2,15 +2,11 @@ document.addEventListener("DOMContentLoaded", function() {
     const tableBody = document.getElementById("tableBody");
     const selfAppraisal = document.getElementById("selfappraisal");
     const supervisorAppraisal = document.getElementById("supervisorappraisal");
-    const errorMessage = document.createElement("p"); 
-    errorMessage.id = "errorMessage";
-    errorMessage.style.color = "red";
-    errorMessage.style.fontWeight = "bold";
-    document.querySelector("table").after(errorMessage);
+  
 
     // Fetch existing appraisal data when page loads
     function fetchAppraisalData() {
-        fetch('AppraisalCalculation.php', {
+        fetch('adminAppraisalCalculation.php', {
             method: 'GET',
             credentials: 'same-origin',
         })
@@ -39,28 +35,28 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Calculate Score percentage (column 8)
     function calculateCustomValue(row) {
-        const target = parsePercentage(row.cells[6]?.textContent || "0");
-        const actual = parsePercentage(row.cells[7]?.textContent || "0");
+        const target = parsePercentage(row.cells[13]?.textContent || "0");
+        const actual = parsePercentage(row.cells[14]?.textContent || "0");
         const result = target !== 0 ? (actual * 100) / target : 0;
-        row.cells[8].textContent = `${result.toFixed(2)}%`;
+        row.cells[15].textContent = `${result.toFixed(2)}%`;
     }
 
     // Calculate Weighted Average (column 9)
     function calculateRow(row) {
-        const weight = parsePercentage(row.cells[5]?.textContent || "0");
-        const score = parsePercentage(row.cells[8]?.textContent || "0");
+        const weight = parsePercentage(row.cells[12]?.textContent || "0");
+        const score = parsePercentage(row.cells[15]?.textContent || "0");
         const result = (weight * score) / 100;
-        row.cells[9].textContent = `${result.toFixed(2)}%`;
+        row.cells[16].textContent = `${result.toFixed(2)}%`;
     }
 
     // Calculate Total Self-Appraisal
     function calculateTotal() {
         let total = 0;
         tableBody.querySelectorAll("tr").forEach(row => {
-            const weightedAvg = parsePercentage(row.cells[9]?.textContent || "0");
+            const weightedAvg = parsePercentage(row.cells[16]?.textContent || "0");
             total += weightedAvg;
         });
-        selfAppraisal.textContent = `${total.toFixed(2)}%`;
+        supervisorAppraisal.textContent = `${total.toFixed(2)}%`;
     }
 
     // Real-time calculation handler
@@ -71,10 +67,10 @@ document.addEventListener("DOMContentLoaded", function() {
             const cellIndex = cell.cellIndex;
 
             // Trigger calculations when relevant columns change
-            if ([6, 7].includes(cellIndex)) {
+            if ([13, 14].includes(cellIndex)) {
                 calculateCustomValue(row);
             }
-            if ([5, 6, 7, 8].includes(cellIndex)) {
+            if ([12, 13, 14, 15].includes(cellIndex)) {
                 calculateRow(row);
                 calculateTotal();
             }
@@ -114,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const selfAppraisalValue = parsePercentage(selfAppraisal.textContent).toFixed(2);
         const supervisorAppraisalValue = parsePercentage(supervisorAppraisal.textContent).toFixed(2);
         
-        fetch('AppraisalCalculation.php', {
+        fetch('adminAppraisalCalculation.php', {
             method: 'POST',
             credentials: 'same-origin',
             headers: {
